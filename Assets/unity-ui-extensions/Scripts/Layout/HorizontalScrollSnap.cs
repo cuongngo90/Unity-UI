@@ -68,8 +68,8 @@ namespace UnityEngine.UI.Extensions
             _scroll_rect.horizontalNormalizedPosition = (float)(_startingScreen - 1) / (float)(_screens - 1);
 
             _containerSize = (int)_screensContainer.gameObject.GetComponent<RectTransform>().offsetMax.x;
-
-            ChangeBulletsInfo(CurrentScreen());
+					
+			ChangeBulletsInfo(CurrentScreen());
 
             if (NextButton)
                 NextButton.GetComponent<Button>().onClick.AddListener(() => { NextScreen(); });
@@ -201,8 +201,10 @@ namespace UnityEngine.UI.Extensions
         private void DistributePages()
         {
             int _offset = 0;
-            int _step = Screen.width;
-            int _dimension = 0;
+			//int _step = Screen.width;
+			// MODIFIED: fix size for multi device
+			int _step = (int) _scroll_rect.GetComponent<RectTransform>().sizeDelta.x;
+			int _dimension = 0;
 
             int currentXPosition = 0;
 
