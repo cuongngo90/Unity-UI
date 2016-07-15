@@ -14,6 +14,7 @@ namespace UnityEngine.UI.Extensions
         private Transform _screensContainer;
 
         private int _screens = 1;
+		[SerializeField]
         private int _startingScreen = 1;
 
         private bool _fastSwipeTimer = false;
@@ -176,13 +177,15 @@ namespace UnityEngine.UI.Extensions
         //returns the current screen that the is seeing
         public int CurrentScreen()
         {
+			
             float absPoz = Math.Abs(_screensContainer.gameObject.GetComponent<RectTransform>().offsetMin.x);
-
-            absPoz = Mathf.Clamp(absPoz, 1, _containerSize - 1);
+			
+			absPoz = Mathf.Clamp(absPoz, 1, _containerSize - 1);
 
             float calc = (absPoz / _containerSize) * _screens;
 
-            return (int)calc;
+			Debug.Log(string.Format("absPoz({0}) / conainerSize({1}) * screen({2}) = current({3}) ", absPoz, _containerSize, _screens, (int)calc));
+			return (int)calc;
         }
 
         //changes the bullets on the bottom of the page - pagination
