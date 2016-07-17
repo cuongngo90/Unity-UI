@@ -36,6 +36,8 @@ namespace UnityEngine.UI.Extensions
         public GameObject NextButton;
         [Tooltip("Button to go to the previous page. (optional)")]
         public GameObject PrevButton;
+		[Tooltip("Button to go to the specify page. (optional)")]
+		public GameObject MoveButton;
 
         public Boolean UseFastSwipe = true;
         public int FastSwipeThreshold = 100;
@@ -66,10 +68,13 @@ namespace UnityEngine.UI.Extensions
                 }
             }
 
-            _scroll_rect.horizontalNormalizedPosition = (float)(_startingScreen - 1) / (float)(_screens - 1);
+			//_scroll_rect.horizontalNormalizedPosition = (float)(_startingScreen - 1) / (float)(_screens - 1);
+			_scroll_rect.horizontalNormalizedPosition = 0f;
 
-            _containerSize = (int)_screensContainer.gameObject.GetComponent<RectTransform>().offsetMax.x;
-					
+			_containerSize = (int)_screensContainer.gameObject.GetComponent<RectTransform>().offsetMax.x;
+
+			_scroll_rect.horizontalNormalizedPosition = (float)(_startingScreen - 1) / (float)(_screens - 1);
+
 			ChangeBulletsInfo(CurrentScreen());
 
             if (NextButton)
@@ -77,6 +82,9 @@ namespace UnityEngine.UI.Extensions
 
             if (PrevButton)
                 PrevButton.GetComponent<Button>().onClick.AddListener(() => { PreviousScreen(); });
+
+			if (MoveButton)
+				MoveButton.GetComponent<Button>().onClick.AddListener(() => { MoveToScreen(); });
         }
 
         void Update()
@@ -129,6 +137,14 @@ namespace UnityEngine.UI.Extensions
                 ChangeBulletsInfo(CurrentScreen() - 1);
             }
         }
+
+		public void MoveToScreen()
+		{
+			_lerp = true;
+			_lerp_target = _positions[3];
+
+			ChangeBulletsInfo(3);
+		}
 
         //Because the CurrentScreen function is not so reliable, these are the functions used for swipes
         private void NextScreenCommand()
@@ -184,7 +200,7 @@ namespace UnityEngine.UI.Extensions
 
             float calc = (absPoz / _containerSize) * _screens;
 
-			Debug.Log(string.Format("absPoz({0}) / conainerSize({1}) * screen({2}) = current({3}) ", absPoz, _containerSize, _screens, (int)calc));
+			Debug.Log(string.Format("absPoz({0}) / conainerSize({1}) * screen({2}) = current({3}) ", absPoz, _containerSize, _screens,  (int)calc));
 			return (int)calc;
         }
 
@@ -227,6 +243,8 @@ namespace UnityEngine.UI.Extensions
         #region Interfaces
         public void OnBeginDrag(PointerEventData eventData)
         {
+			Debug.Log("OnBeginDrag");
+
             _startPosition = _screensContainer.localPosition;
             _fastSwipeCounter = 0;
             _fastSwipeTimer = true;
@@ -235,7 +253,9 @@ namespace UnityEngine.UI.Extensions
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            _startDrag = true;
+			Debug.Log("OnEndDrag");
+
+			_startDrag = true;
             if (_scroll_rect.horizontal)
             {
                 if (UseFastSwipe)
@@ -276,7 +296,9 @@ namespace UnityEngine.UI.Extensions
 
         public void OnDrag(PointerEventData eventData)
         {
-            _lerp = false;
+			Debug.Log("OnDrag");
+
+			_lerp = false;
             if (_startDrag)
             {
                 OnBeginDrag(eventData);
